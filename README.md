@@ -37,13 +37,40 @@ cp .env.example .env
 ```
 
 Required environment variables:
-- `OPENAI_API_KEY`: Your OpenAI API key
+- `LLM_PROVIDER`: Choose "openai" or "openrouter" (default: openai)
+- `OPENAI_API_KEY`: Your OpenAI API key (if using OpenAI)
+- `OPENROUTER_API_KEY`: Your OpenRouter API key (if using OpenRouter)
 - `TAVILY_API_KEY`: Your Tavily API key for web search
-- `LANGSMITH_API_KEY`: (Optional) For LangSmith tracing
-- `TELEGRAM_BOT_TOKEN`: (Optional) For Telegram integration
-- SMTP credentials: (Optional) For email newsletters
+- `LLM_MODEL`: Model to use (e.g., gpt-4o-mini, anthropic/claude-3-5-sonnet)
 
-### 3. Initialize Database
+Optional environment variables:
+- `LANGSMITH_API_KEY`: For LangSmith tracing
+- `TELEGRAM_BOT_TOKEN`: For Telegram integration
+- SMTP credentials: For email newsletters
+
+### 3. Choose Your LLM Provider
+
+#### Option A: OpenAI (Default)
+```bash
+# In your .env file:
+LLM_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+LLM_MODEL=gpt-4o-mini
+```
+
+#### Option B: OpenRouter (Access Multiple Models)
+```bash
+# In your .env file:
+LLM_PROVIDER=openrouter
+OPENROUTER_API_KEY=sk-or-v1-...
+LLM_MODEL=anthropic/claude-3-5-sonnet
+# Or use: openai/gpt-4o, meta-llama/llama-3.1-70b-instruct, etc.
+```
+
+Get your OpenRouter API key at: https://openrouter.ai/keys
+Browse available models at: https://openrouter.ai/models
+
+### 4. Initialize Database
 
 The SQLite database will be automatically created on first run at `./research_assistant.db`.
 

@@ -12,8 +12,20 @@ class Config:
     LANGSMITH_PROJECT = os.getenv("LANGSMITH_PROJECT", "ai-research-assistant")
     LANGSMITH_TRACING = os.getenv("LANGSMITH_TRACING", "true").lower() == "true"
     
-    # LLM Provider
+    # LLM Provider Configuration
+    # Supports both OpenAI and OpenRouter
+    LLM_PROVIDER = os.getenv("LLM_PROVIDER", "openai").lower()  # "openai" or "openrouter"
+
+    # OpenAI Configuration
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+    # OpenRouter Configuration
+    OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+    OPENROUTER_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+
+    # Model Configuration (works for both providers)
+    # For OpenAI: gpt-4o-mini, gpt-4o, gpt-4-turbo, etc.
+    # For OpenRouter: openai/gpt-4o-mini, anthropic/claude-3-5-sonnet, etc.
     LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o-mini")
     LLM_TEMPERATURE = float(os.getenv("LLM_TEMPERATURE", "0.7"))
     
@@ -60,19 +72,27 @@ class Config:
     @classmethod
     def validate(cls):
         """Validate required configuration"""
-        required_vars = [
-            ("OPENAI_API_KEY", cls.OPENAI_API_KEY),
-            ("TAVILY_API_KEY", cls.TAVILY_API_KEY),
-        ]
-        
-        missing = [var_name for var_name, var_value in required_vars if not var_value]
-        
-        if missing:
+        # Check LLM provider-specific requirements
+        if cls.LLM_PROVIDER == "openrouter":
+            if not cls.OPENROUTER_API_KEY:
+                raise ValueError(
+                    "OPENROUTER_API_KEY is required when LLM_PROVIDER=openrouter.\n"
+                    "Please set OPENROUTER_API_KEY in your .env file."
+                )
+        else:  # Default to OpenAI
+            if not cls.OPENAI_API_KEY:
+                raise ValueError(
+                    "OPENAI_API_KEY is required when LLM_PROVIDER=openai (or not set).\n"
+                    "Please set OPENAI_API_KEY in your .env file."
+                )
+
+        # Check other required vars
+        if not cls.TAVILY_API_KEY:
             raise ValueError(
-                f"Missing required environment variables: {', '.join(missing)}\n"
-                "Please check your .env file or environment settings."
+                "TAVILY_API_KEY is required for web search functionality.\n"
+                "Please set TAVILY_API_KEY in your .env file."
             )
-        
+
         return True
 
 

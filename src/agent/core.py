@@ -112,12 +112,20 @@ class ResearchAgent:
                 output_key="output"
             )
         
-        # Initialize LLM
-        self.llm = ChatOpenAI(
-            model=config.LLM_MODEL,
-            temperature=config.LLM_TEMPERATURE,
-            api_key=config.OPENAI_API_KEY,
-        )
+        # Initialize LLM based on provider
+        if config.LLM_PROVIDER == "openrouter":
+            self.llm = ChatOpenAI(
+                model=config.LLM_MODEL,
+                temperature=config.LLM_TEMPERATURE,
+                api_key=config.OPENROUTER_API_KEY,
+                base_url=config.OPENROUTER_BASE_URL,
+            )
+        else:  # Default to OpenAI
+            self.llm = ChatOpenAI(
+                model=config.LLM_MODEL,
+                temperature=config.LLM_TEMPERATURE,
+                api_key=config.OPENAI_API_KEY,
+            )
         
         # Create ReAct prompt
         self.prompt = self._create_react_prompt()
