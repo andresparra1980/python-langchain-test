@@ -35,13 +35,13 @@ Based on PRD: `0001-prd-ai-research-assistant-agent.md`
 ## Tasks
 
 - [ ] 1.0 Setup Project Infrastructure and Core Dependencies
-  - [ ] 1.1 Configure `pyproject.toml` with uv dependencies (langchain, langchain-openai/anthropic, langsmith, tavily-python, python-telegram-bot, etc.)
-  - [ ] 1.2 Create `.env.example` file with required environment variables (LANGSMITH_API_KEY, OPENAI_API_KEY, TAVILY_API_KEY, TELEGRAM_BOT_TOKEN, SMTP credentials, etc.)
-  - [ ] 1.3 Create `config.py` for configuration management (tool call limits, research keywords, email settings)
-  - [ ] 1.4 Setup project structure (create src/ directory with subdirectories: agent/, memory/, adapters/, utils/)
-  - [ ] 1.5 Initialize database schema file for SQLite
-  - [ ] 1.6 Add pytest and testing dependencies to pyproject.toml
-  - [ ] 1.7 Create basic README with setup instructions using uv
+  - [x] 1.1 Configure `pyproject.toml` with uv dependencies (langchain, langchain-openai/anthropic, langsmith, tavily-python, python-telegram-bot, etc.)
+  - [x] 1.2 Create `.env.example` file with required environment variables (LANGSMITH_API_KEY, OPENAI_API_KEY, TAVILY_API_KEY, TELEGRAM_BOT_TOKEN, SMTP credentials, etc.)
+  - [x] 1.3 Create `config.py` for configuration management (tool call limits, research keywords, email settings)
+  - [x] 1.4 Setup project structure (create src/ directory with subdirectories: agent/, memory/, adapters/, utils/)
+  - [x] 1.5 Initialize database schema file for SQLite
+  - [x] 1.6 Add pytest and testing dependencies to pyproject.toml
+  - [x] 1.7 Create basic README with setup instructions using uv
 
 - [ ] 2.0 Implement Agent Core with LangChain and LangSmith Integration
   - [ ] 2.1 Create `src/utils/langsmith.py` to configure LangSmith tracing and instrumentation
