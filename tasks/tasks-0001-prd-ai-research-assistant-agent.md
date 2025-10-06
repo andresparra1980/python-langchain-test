@@ -34,7 +34,7 @@ Based on PRD: `0001-prd-ai-research-assistant-agent.md`
 
 ## Tasks
 
-- [ ] 1.0 Setup Project Infrastructure and Core Dependencies
+- [x] 1.0 Setup Project Infrastructure and Core Dependencies
   - [x] 1.1 Configure `pyproject.toml` with uv dependencies (langchain, langchain-openai/anthropic, langsmith, tavily-python, python-telegram-bot, etc.)
   - [x] 1.2 Create `.env.example` file with required environment variables (LANGSMITH_API_KEY, OPENAI_API_KEY, TAVILY_API_KEY, TELEGRAM_BOT_TOKEN, SMTP credentials, etc.)
   - [x] 1.3 Create `config.py` for configuration management (tool call limits, research keywords, email settings)
@@ -44,13 +44,13 @@ Based on PRD: `0001-prd-ai-research-assistant-agent.md`
   - [x] 1.7 Create basic README with setup instructions using uv
 
 - [ ] 2.0 Implement Agent Core with LangChain and LangSmith Integration
-  - [ ] 2.1 Create `src/utils/langsmith.py` to configure LangSmith tracing and instrumentation
-  - [ ] 2.2 Implement `src/agent/core.py` with LangChain ReAct agent initialization
-  - [ ] 2.3 Add conversation memory/context management using LangChain's ConversationBufferMemory or similar
-  - [ ] 2.4 Implement tool call limit counter and permission request logic
-  - [ ] 2.5 Add error handling and graceful degradation for failed tool calls
-  - [ ] 2.6 Instrument agent with LangSmith callbacks to log all steps, tool calls, and LLM interactions
-  - [ ] 2.7 Write unit tests for agent core functionality in `tests/test_agent_core.py`
+  - [x] 2.1 Create `src/utils/langsmith.py` to configure LangSmith tracing and instrumentation
+  - [x] 2.2 Implement `src/agent/core.py` with LangChain ReAct agent initialization
+  - [x] 2.3 Add conversation memory/context management using LangChain's ConversationBufferMemory or similar
+  - [x] 2.4 Implement tool call limit counter and permission request logic
+  - [x] 2.5 Add error handling and graceful degradation for failed tool calls
+  - [x] 2.6 Instrument agent with LangSmith callbacks to log all steps, tool calls, and LLM interactions
+  - [x] 2.7 Write unit tests for agent core functionality in `tests/test_agent_core.py`
 
 - [ ] 3.0 Build Memory System for Topic Tracking and Novelty Detection
   - [ ] 3.1 Create `src/memory/models.py` with data models for topics (ID, name, timestamps, summary, sources, tags)
