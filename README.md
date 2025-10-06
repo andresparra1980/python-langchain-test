@@ -181,9 +181,14 @@ uv run pytest
 ## Configuration
 
 Key settings in `config.py`:
-- `MAX_TOOL_CALLS`: Maximum autonomous tool calls before requesting permission (default: 10)
+- `MAX_TOOL_CALLS`: Maximum autonomous tool calls **per user message** (default: 10)
+  - The limit resets for each new message you send to the agent
+  - This prevents runaway tool usage while allowing complex research within a single query
+  - Example: You ask "research AI libraries" → agent can use up to 10 tools → when you ask the next question, the counter resets
 - `RESEARCH_KEYWORDS`: Topics to focus research on
-- `NEWSLETTER_FORMAT`: Email format (html/markdown)
+- `NEWSLETTER_FORMAT`: Email format (html/markdown/text)
+- `LLM_PROVIDER`: Choose between "openai" or "openrouter"
+- `LLM_MODEL`: Which model to use (e.g., gpt-4o-mini, anthropic/claude-3-5-sonnet)
 
 ## License
 

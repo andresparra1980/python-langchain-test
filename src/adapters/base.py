@@ -97,6 +97,11 @@ class InputAdapter(ABC):
             return "Error: No agent core configured"
 
         try:
+            # Reset tool call counter for this message
+            # Each user message gets a fresh limit
+            if hasattr(self.agent_core, 'reset_tool_call_count'):
+                self.agent_core.reset_tool_call_count()
+
             # Process message through agent
             result = self.agent_core.run(message)
 

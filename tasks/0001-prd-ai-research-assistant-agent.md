@@ -99,11 +99,17 @@ The agent features a modular input architecture supporting multiple communicatio
 
 ### Safety & Cost Controls
 
-21. The agent must implement a configurable maximum tool call limit per autonomous session (value TBD during implementation).
+21. The agent must implement a configurable maximum tool call limit per user message (not per session).
+    - The limit resets for each new user message/query
+    - Default value: 10 tool calls per message (configurable via `MAX_TOOL_CALLS` environment variable)
+    - This prevents runaway tool usage while allowing complex multi-step research within a single query
+    - Example: User asks "research AI libraries" → agent can make up to 10 tool calls → limit resets on next user message
 
 22. The system must pause and request explicit user permission when approaching the tool call limit.
+    - Warning displayed at 80% of limit (e.g., "Tool call 8/10 - approaching limit")
+    - Agent stops at limit and shows clear message about reaching the cap
 
-23. The system must provide estimates of token consumption when asking for continuation permission.
+23. The system must provide estimates of token consumption when asking for continuation permission (if implemented in future iterations).
 
 ### Scheduling & Automation
 

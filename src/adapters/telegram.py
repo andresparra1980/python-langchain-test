@@ -160,6 +160,11 @@ class TelegramAdapter(InputAdapter):
         try:
             # Process message through agent (async version)
             if self.agent_core:
+                # Reset tool call counter for this message
+                # Each user message gets a fresh limit
+                if hasattr(self.agent_core, 'reset_tool_call_count'):
+                    self.agent_core.reset_tool_call_count()
+
                 result = await self.agent_core.arun(message_text)
 
                 # Extract output from result dictionary

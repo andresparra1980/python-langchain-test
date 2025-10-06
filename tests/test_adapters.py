@@ -59,12 +59,15 @@ class TestInputAdapter:
         """Test process_message with successful agent response"""
         mock_agent = Mock()
         mock_agent.run.return_value = {"output": "Agent response"}
+        mock_agent.reset_tool_call_count = Mock()
 
         adapter = ConcreteAdapter(agent_core=mock_agent)
         result = adapter.process_message("test query")
 
         assert result == "Agent response"
         mock_agent.run.assert_called_once_with("test query")
+        # Verify tool call counter was reset
+        mock_agent.reset_tool_call_count.assert_called_once()
 
     def test_process_message_dict_response(self):
         """Test process_message handles dict response correctly"""
@@ -118,6 +121,26 @@ class TestInputAdapter:
         adapter.clear_session_data()
 
         assert adapter.session_data == {}
+
+    def test_tool_call_counter_reset_per_message(self):
+        """Test that tool call counter is reset for each message"""
+        mock_agent = Mock()
+        mock_agent.run.return_value = {"output": "Response"}
+        mock_agent.reset_tool_call_count = Mock()
+
+        adapter = ConcreteAdapter(agent_core=mock_agent)
+
+        # Process first message
+        adapter.process_message("message 1")
+        assert mock_agent.reset_tool_call_count.call_count == 1
+
+        # Process second message - counter should be reset again
+        adapter.process_message("message 2")
+        assert mock_agent.reset_tool_call_count.call_count == 2
+
+        # Process third message
+        adapter.process_message("message 3")
+        assert mock_agent.reset_tool_call_count.call_count == 3
 
 
 class TestCLIAdapter:
