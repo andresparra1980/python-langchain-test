@@ -116,20 +116,23 @@ class TopicManager:
             ResearchDomain object
         """
         with self.db.session_scope() as session:
-            # Try to find existing domain
+            # Check if it's a preset key and get the actual name
+            preset = self.PRESET_TOPICS.get(domain_name.lower())
+            actual_name = preset["name"] if preset else domain_name
+
+            # Try to find existing domain by actual name
             domain = session.query(ResearchDomain).filter(
-                ResearchDomain.name == domain_name
+                ResearchDomain.name == actual_name
             ).first()
 
             if domain:
                 # Update last_used timestamp
                 domain.last_used = datetime.utcnow()
                 session.add(domain)
+                session.expunge(domain)
                 return domain
 
-            # Check if it's a preset
-            preset = self.PRESET_TOPICS.get(domain_name.lower())
-
+            # Create new domain
             if preset:
                 # Create from preset
                 domain = ResearchDomain(
@@ -147,6 +150,7 @@ class TopicManager:
 
             session.add(domain)
             session.flush()
+            session.expunge(domain)
             return domain
 
     def set_current_domain(self, domain_name: str) -> ResearchDomain:
