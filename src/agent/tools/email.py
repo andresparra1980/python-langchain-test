@@ -142,13 +142,24 @@ class EmailTools:
             try:
                 findings = json.loads(findings_json)
             except json.JSONDecodeError:
-                # If not valid JSON, treat as a simple text summary
-                findings = [{
-                    "topic": "Research Summary",
-                    "summary": findings_json,
-                    "sources": [],
-                    "tags": []
-                }]
+                # Try to handle escaped JSON (common when LLM wraps JSON in quotes)
+                try:
+                    # Remove outer quotes and unescape
+                    if findings_json.startswith('"') and findings_json.endswith('"'):
+                        unescaped = findings_json[1:-1].replace('\\"', '"').replace('\\\\', '\\')
+                        findings = json.loads(unescaped)
+                    else:
+                        # Try unescaping without removing quotes
+                        unescaped = findings_json.replace('\\"', '"')
+                        findings = json.loads(unescaped)
+                except (json.JSONDecodeError, Exception):
+                    # If all parsing fails, treat as a simple text summary
+                    findings = [{
+                        "topic": "Research Summary",
+                        "summary": findings_json,
+                        "sources": [],
+                        "tags": []
+                    }]
 
             # Check for error response from get_newsletter_findings
             if isinstance(findings, dict) and "error" in findings:
@@ -231,11 +242,12 @@ class EmailTools:
                 func=self.send_newsletter,
                 description=(
                     "Send a newsletter email with research findings. "
-                    "IMPORTANT: First use search_memory to get recent topics, then pass them here. "
-                    "Input MUST be a valid JSON string (use json.dumps) with this exact structure: "
-                    '[{"topic": "Topic Name", "summary": "Detailed summary of findings", "sources": ["https://url1.com", "https://url2.com"], "tags": ["tag1", "tag2"]}]. '
-                    "Each topic should have: topic (string), summary (string, be detailed!), sources (list of URLs), tags (list). "
-                    "Make sure summaries are comprehensive - include key details, features, or findings. "
+                    "IMPORTANT: First use get_newsletter_findings to retrieve formatted data, then pass the EXACT output here. "
+                    "Input should be the JSON string returned from get_newsletter_findings - do NOT modify it, just pass it directly. "
+                    "Example workflow: "
+                    "1. Call get_newsletter_findings with number of topics (e.g., '10') "
+                    "2. Take the returned JSON string and pass it DIRECTLY to this tool "
+                    "3. Done! The newsletter will be formatted and sent. "
                     "Use this when the user explicitly requests a newsletter or email report."
                 )
             ),
