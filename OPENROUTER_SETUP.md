@@ -118,7 +118,7 @@ Example: `anthropic/claude-3-5-sonnet`, not just `claude-3-5-sonnet`
 ```bash
 # LLM Provider
 LLM_PROVIDER=openrouter
-OPENROUTER_API_KEY=sk-or-v1-1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef
+OPENROUTER_API_KEY=sk-or-v1-12....
 LLM_MODEL=anthropic/claude-3-5-sonnet
 LLM_TEMPERATURE=0.7
 
