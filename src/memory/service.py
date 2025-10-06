@@ -8,10 +8,16 @@ from src.memory.database import get_database
 
 class MemoryService:
     """Service layer for managing research topic memory"""
-    
-    def __init__(self):
-        """Initialize the memory service"""
+
+    def __init__(self, current_domain_id: Optional[int] = None):
+        """
+        Initialize the memory service.
+
+        Args:
+            current_domain_id: Current research domain ID for filtering
+        """
         self.db = get_database()
+        self.current_domain_id = current_domain_id
     
     def store_topic(
         self,
@@ -23,25 +29,26 @@ class MemoryService:
     ) -> ResearchTopic:
         """
         Store a new research topic in memory.
-        
+
         Args:
             topic_name: Name of the topic
             summary: Summary of research findings
             sources: List of source URLs
             tags: List of tags/categories
             session: Optional SQLAlchemy session (creates new if None)
-            
+
         Returns:
             Created ResearchTopic object (detached from session)
         """
         sources = sources or []
         tags = tags or []
-        
+
         topic = ResearchTopic(
             topic_name=topic_name,
             summary=summary,
             sources=sources,
             tags=tags,
+            research_domain_id=self.current_domain_id,
             first_researched=datetime.utcnow(),
             last_mentioned=datetime.utcnow()
         )
@@ -110,19 +117,23 @@ class MemoryService:
     ) -> List[ResearchTopic]:
         """
         Search for topics by query string or tags.
-        
+
         Args:
             query: Search query (searches in topic_name and summary)
             tags: List of tags to filter by
             limit: Maximum number of results
             offset: Number of results to skip
-            
+
         Returns:
             List of ResearchTopic objects
         """
         with self.db.session_scope() as session:
             q = session.query(ResearchTopic)
-            
+
+            # Filter by current domain if set
+            if self.current_domain_id is not None:
+                q = q.filter(ResearchTopic.research_domain_id == self.current_domain_id)
+
             # Apply query filter
             if query:
                 q = q.filter(

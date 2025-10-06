@@ -13,9 +13,11 @@ from config import config
 from src.agent.core import ResearchAgent
 from src.agent.tools.search import create_search_tools
 from src.agent.tools.email import create_email_tools
-from src.agent.tools.memory import create_memory_tools
+from src.agent.tools.memory import MemoryTools
 from src.adapters.cli import CLIAdapter
 from src.adapters.telegram import TelegramAdapter
+from src.topic.manager import TopicManager
+from src.topic.selector import select_topic, display_topic_stats
 
 
 def create_agent(verbose: bool = True) -> ResearchAgent:
@@ -37,7 +39,17 @@ def create_agent(verbose: bool = True) -> ResearchAgent:
         print(f"❌ Configuration error: {e}")
         sys.exit(1)
 
-    # Create all tool sets
+    # Select research topic
+    topic_name = select_topic(config.RESEARCH_TOPIC)
+
+    # Initialize topic manager and set current domain
+    topic_manager = TopicManager()
+    current_domain = topic_manager.set_current_domain(topic_name)
+
+    # Display topic stats
+    display_topic_stats(topic_manager, topic_name)
+
+    # Create all tool sets with topic filtering
     try:
         search_tools = create_search_tools()
         print(f"  ✓ Loaded {len(search_tools)} search tools")
@@ -45,7 +57,9 @@ def create_agent(verbose: bool = True) -> ResearchAgent:
         email_tools = create_email_tools()
         print(f"  ✓ Loaded {len(email_tools)} email tools")
 
-        memory_tools = create_memory_tools()
+        # Create memory tools with current domain
+        memory_tools_instance = MemoryTools(current_domain_id=current_domain.id)
+        memory_tools = memory_tools_instance.get_tools()
         print(f"  ✓ Loaded {len(memory_tools)} memory tools")
 
         # Combine all tools
@@ -56,13 +70,14 @@ def create_agent(verbose: bool = True) -> ResearchAgent:
         print(f"❌ Error loading tools: {e}")
         sys.exit(1)
 
-    # Create agent
+    # Create agent with topic manager
     try:
         agent = ResearchAgent(
             tools=all_tools,
             verbose=verbose,
             use_memory=True,
-            enable_langsmith=config.LANGSMITH_TRACING
+            enable_langsmith=config.LANGSMITH_TRACING,
+            topic_manager=topic_manager
         )
         print("  ✓ Agent initialized successfully")
         return agent

@@ -1,11 +1,12 @@
 # AI Research Assistant Agent
 
-A conversational AI agent built with LangChain that autonomously researches trending AI/ML topics, tracks findings in memory, and delivers insights via CLI, Telegram, or email newsletters.
+A conversational AI agent built with LangChain that autonomously researches trending topics in any domain, tracks findings in memory, and delivers insights via CLI, Telegram, or email newsletters.
 
 ## Features
 
-- 🤖 **Autonomous Research**: Uses ReAct agent pattern with tool calling to search the web for AI trends
-- 🧠 **Memory System**: Tracks researched topics to avoid redundant information
+- 🤖 **Autonomous Research**: Uses ReAct agent pattern with tool calling to search the web for trends
+- 🎯 **Topic-Agnostic**: Research any domain - AI/ML, crypto, web3, quantum computing, or custom topics
+- 🧠 **Memory System**: Tracks researched topics per domain to avoid redundant information
 - 📊 **LangSmith Observability**: Full tracing of agent decisions and tool calls
 - 💬 **Multi-Channel Input**: CLI and Telegram support with modular architecture
 - 📧 **Newsletter Generation**: Automated email reports of research findings
@@ -70,9 +71,46 @@ LLM_MODEL=anthropic/claude-3-5-sonnet
 Get your OpenRouter API key at: https://openrouter.ai/keys
 Browse available models at: https://openrouter.ai/models
 
-### 4. Initialize Database
+### 4. Select Research Topic
 
-The SQLite database will be automatically created on first run at `./research_assistant.db`.
+The agent can research any topic domain. Choose at startup or configure in `.env`:
+
+```bash
+# Leave empty to be prompted at startup (recommended for first run)
+RESEARCH_TOPIC=
+
+# Or specify a preset topic:
+RESEARCH_TOPIC=ai-ml              # AI/ML development (default)
+RESEARCH_TOPIC=cryptocurrency     # Crypto & blockchain
+RESEARCH_TOPIC=web3               # Web3 & decentralized tech
+RESEARCH_TOPIC=quantum-computing  # Quantum computing
+
+# Or use a custom topic:
+RESEARCH_TOPIC=biotech            # Any domain you choose
+```
+
+**Available Preset Topics:**
+- **ai-ml**: AI and Machine Learning (libraries, frameworks, models, tools)
+- **cryptocurrency**: Blockchain, DeFi, smart contracts, crypto protocols
+- **web3**: Decentralized apps, IPFS, Web3 infrastructure
+- **quantum-computing**: Quantum hardware, algorithms, research
+
+**Custom Topics**: You can research any domain! When prompted at startup, select option 5 to create your own research topic with custom keywords and focus areas.
+
+### 5. Initialize Database
+
+Run the migration script to set up the database with topic support:
+
+```bash
+uv run python scripts/migrate_to_topic_system.py
+```
+
+This will:
+- Create the `research_domains` and `research_topics` tables
+- Migrate any existing data to the default AI/ML domain
+- Set up preset topic domains (AI/ML, crypto, web3, quantum computing)
+
+The SQLite database is stored at `./research_assistant.db`.
 
 ## Usage
 
@@ -117,9 +155,34 @@ Once the CLI starts, you can:
 - Search specific sources: `"Search GitHub for vector databases"`
 - Check memory: `"What did we discuss about LangChain?"`
 - Request newsletters: `"Send me a newsletter with recent findings"`
+- **Topic management**:
+  - `/topic` - Show current research topic
+  - `/topic list` - List all available topics
+  - `/topic set <name>` - Switch to a different topic (requires restart)
 - Get help: Type `help`
 - Clear session: Type `clear`
 - Exit: Type `exit` or `quit`
+
+## Topic Management
+
+The agent features a powerful topic management system that allows you to research any domain:
+
+### How It Works
+1. **Topic Selection**: Choose your research domain at startup or configure in `.env`
+2. **Memory Isolation**: Each topic has its own memory space - research on crypto won't mix with AI/ML findings
+3. **Dynamic Prompts**: Agent instructions automatically adapt to your selected topic
+4. **Preset Topics**: Use built-in presets or create custom research domains
+
+### Switching Topics
+To research a different domain:
+1. Update `RESEARCH_TOPIC` in your `.env` file
+2. Restart the agent
+3. Or leave it empty and select interactively at startup
+
+### Topic Commands
+- `/topic` - View current topic and stats
+- `/topic list` - See all available topics with memory counts
+- `/topic set <name>` - Note this requires restarting the agent
 
 ## Project Structure
 
@@ -130,9 +193,12 @@ Once the CLI starts, you can:
 │   │   ├── core.py              # LangChain ReAct agent
 │   │   └── tools/               # Agent tools (search, email, memory)
 │   ├── memory/
-│   │   ├── models.py            # SQLAlchemy models
+│   │   ├── models.py            # SQLAlchemy models (topics, domains)
 │   │   ├── database.py          # Database connection
 │   │   └── service.py           # Memory operations
+│   ├── topic/
+│   │   ├── manager.py           # Topic management system
+│   │   └── selector.py          # Interactive topic selection
 │   ├── adapters/
 │   │   ├── base.py              # Abstract adapter interface
 │   │   ├── cli.py               # CLI adapter
@@ -140,6 +206,8 @@ Once the CLI starts, you can:
 │   └── utils/
 │       ├── langsmith.py         # LangSmith instrumentation
 │       └── formatters.py        # Newsletter formatting
+├── scripts/
+│   └── migrate_to_topic_system.py  # Database migration
 ├── tests/                       # Unit tests
 ├── config.py                    # Configuration management
 ├── main.py                      # Entry point

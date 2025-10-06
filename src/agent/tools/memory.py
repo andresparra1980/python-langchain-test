@@ -5,10 +5,15 @@ from src.memory.service import MemoryService
 
 class MemoryTools:
     """LangChain tools for querying and managing research memory"""
-    
-    def __init__(self):
-        """Initialize memory tools"""
-        self.memory_service = MemoryService()
+
+    def __init__(self, current_domain_id: Optional[int] = None):
+        """
+        Initialize memory tools.
+
+        Args:
+            current_domain_id: Current research domain ID for filtering
+        """
+        self.memory_service = MemoryService(current_domain_id=current_domain_id)
     
     def check_memory(self, query: str) -> str:
         """

@@ -116,6 +116,11 @@ class CLIAdapter(InputAdapter):
                     print(self._colorize("✓ Session cleared", "green"))
                     continue
 
+                # Check for topic commands
+                if user_input.strip().lower().startswith("/topic"):
+                    self._handle_topic_command(user_input.strip())
+                    continue
+
                 # Process message through agent
                 response = self.process_message(user_input)
 
@@ -213,9 +218,12 @@ Type 'exit' to quit.
         """Display help information."""
         help_text = """
 Available commands:
-  help, ?     - Show this help message
-  clear       - Clear conversation history
-  exit, quit  - Exit the application
+  help, ?           - Show this help message
+  clear             - Clear conversation history
+  /topic            - Show current research topic
+  /topic list       - List all available topics
+  /topic set <name> - Switch to a different topic
+  exit, quit        - Exit the application
 
 You can ask me to:
   • "Research new Python AI libraries"
@@ -226,3 +234,65 @@ You can ask me to:
 
 """
         print(self._colorize(help_text, "yellow"))
+
+    def _handle_topic_command(self, command: str) -> None:
+        """
+        Handle topic management commands.
+
+        Args:
+            command: The topic command string
+        """
+        from src.topic.manager import get_topic_manager
+
+        parts = command.split()
+        topic_manager = get_topic_manager()
+
+        if len(parts) == 1:
+            # Show current topic
+            current_domain = topic_manager.get_current_domain()
+            if current_domain:
+                print(self._colorize(f"\nCurrent topic: {current_domain.name}", "green"))
+                stats = topic_manager.get_domain_stats(current_domain.name)
+                print(f"Topics researched: {stats['topic_count']}")
+                if stats.get('recent_topics'):
+                    print(f"Recent: {', '.join(stats['recent_topics'][:3])}\n")
+            else:
+                print(self._colorize("\nNo topic currently selected", "yellow"))
+
+        elif len(parts) >= 2 and parts[1].lower() == "list":
+            # List all topics
+            domains = topic_manager.list_domains()
+            if domains:
+                print(self._colorize("\nAvailable research topics:", "green"))
+                for i, domain in enumerate(domains, 1):
+                    stats = topic_manager.get_domain_stats(domain.name)
+                    current_marker = " (current)" if domain.id == topic_manager._current_domain_id else ""
+                    print(f"  {i}. {domain.name}{current_marker} - {stats['topic_count']} topics")
+                print()
+            else:
+                print(self._colorize("\nNo topics available", "yellow"))
+
+        elif len(parts) >= 3 and parts[1].lower() == "set":
+            # Switch topic
+            new_topic = " ".join(parts[2:])
+            try:
+                # Confirm switch
+                print(self._colorize(f"\n⚠️  Switching to topic: {new_topic}", "yellow"))
+                print("This will change your research context.")
+                confirm = input("Continue? (y/n): ").strip().lower()
+
+                if confirm == "y":
+                    # Note: This requires restarting the agent to update memory tools
+                    print(self._colorize("\n✗ Topic switching requires restarting the agent.", "red"))
+                    print("Please restart the application with RESEARCH_TOPIC set to:", new_topic)
+                    print("Or add it to your .env file.\n")
+                else:
+                    print(self._colorize("\nCancelled", "yellow"))
+            except Exception as e:
+                print(self._colorize(f"\n✗ Error: {str(e)}\n", "red"))
+
+        else:
+            print(self._colorize("\nInvalid topic command. Usage:", "yellow"))
+            print("  /topic            - Show current topic")
+            print("  /topic list       - List all topics")
+            print("  /topic set <name> - Switch topic (requires restart)\n")

@@ -7,6 +7,7 @@ from langchain.memory import ConversationBufferMemory
 from langchain.callbacks.base import BaseCallbackHandler
 from config import config
 from src.utils.langsmith import setup_langsmith_tracing
+from src.topic.manager import TopicManager
 
 
 class ToolCallLimitCallback(BaseCallbackHandler):
@@ -69,28 +70,31 @@ class ResearchAgent:
     """
     
     def __init__(
-        self, 
-        tools: List[BaseTool], 
-        verbose: bool = True, 
+        self,
+        tools: List[BaseTool],
+        verbose: bool = True,
         use_memory: bool = True,
         permission_callback: Optional[Callable] = None,
-        enable_langsmith: bool = True
+        enable_langsmith: bool = True,
+        topic_manager: Optional[TopicManager] = None
     ):
         """
         Initialize the research agent.
-        
+
         Args:
             tools: List of LangChain tools available to the agent
             verbose: Whether to print agent reasoning steps
             use_memory: Whether to use conversation memory for context
             permission_callback: Function to call when tool limit reached
             enable_langsmith: Whether to enable LangSmith tracing
+            topic_manager: TopicManager instance for topic-aware prompts
         """
         self.tools = tools
         self.verbose = verbose
         self.max_tool_calls = config.MAX_TOOL_CALLS
         self.use_memory = use_memory
         self.permission_callback = permission_callback
+        self.topic_manager = topic_manager
         
         # Setup LangSmith tracing
         self.langsmith_client = None
@@ -154,13 +158,32 @@ class ResearchAgent:
     def _create_react_prompt(self) -> PromptTemplate:
         """
         Create the ReAct prompt template for the agent.
-        
+
         Returns:
             PromptTemplate configured for ReAct reasoning
         """
-        template = """You are an AI Research Assistant specialized in tracking trending topics in AI/ML development.
+        # Get topic context from topic manager
+        if self.topic_manager:
+            context = self.topic_manager.get_domain_prompt_context()
+            domain = context["domain"]
+            description = context["description"]
+            keywords = context["keywords"]
+            focus_areas = context["focus_areas"]
+        else:
+            # Fallback to AI/ML
+            domain = "AI/ML"
+            description = "AI and Machine Learning development"
+            keywords = "AI libraries, ML frameworks, LLM models, vector databases"
+            focus_areas = "new libraries, frameworks, models, and tools"
 
-Your mission is to research new libraries, frameworks, models, projects, and significant updates in the AI ecosystem. You have access to tools to search the web, check your memory for previously researched topics, save findings to memory, and send email reports.
+        template = f"""You are a Research Assistant specialized in tracking trending topics in {description}.
+
+Your mission is to research {focus_areas} in the {domain} ecosystem. You have access to tools to search the web, check your memory for previously researched topics, save findings to memory, and send email reports.
+
+RESEARCH FOCUS:
+- Domain: {domain}
+- Key areas: {keywords}
+- Focus on: {focus_areas}
 
 IMPORTANT MEMORY WORKFLOW:
 1. BEFORE researching: Use check_memory or check_novelty to see if the topic was already researched
@@ -173,7 +196,7 @@ After researching a topic, ALWAYS save it to memory with:
 - Topic name
 - Brief summary of what you found
 - Source URLs you used
-- Relevant tags (library, framework, model, etc.)
+- Relevant tags
 
 This ensures you won't waste time re-researching the same topics.
 
@@ -192,13 +215,13 @@ User: "Send me a newsletter"
 TOOLS:
 You have access to the following tools:
 
-{tools}
+{{tools}}
 
 Use the following format:
 
 Question: the input question you must answer
 Thought: you should always think about what to do
-Action: the action to take, should be one of [{tool_names}]
+Action: the action to take, should be one of [{{tool_names}}]
 Action Input: the input to the action
 Observation: the result of the action
 ... (this Thought/Action/Action Input/Observation can repeat N times)
@@ -207,9 +230,9 @@ Final Answer: the final answer to the original input question
 
 Begin!
 
-Question: {input}
-Thought: {agent_scratchpad}"""
-        
+Question: {{input}}
+Thought: {{agent_scratchpad}}"""
+
         return PromptTemplate(
             template=template,
             input_variables=["input", "agent_scratchpad"],

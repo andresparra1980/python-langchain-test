@@ -14,4 +14,4 @@ wheels/
 .env.local
 
 # Database
-research_assistant.db
+research_assistant.db*.backup_*

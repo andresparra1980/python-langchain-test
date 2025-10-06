@@ -50,8 +50,12 @@ class Config:
     # Agent Configuration
     MAX_TOOL_CALLS = int(os.getenv("MAX_TOOL_CALLS", "10"))
     RESEARCH_MODE = os.getenv("RESEARCH_MODE", "autonomous")
-    
-    # Research Keywords/Focus Areas
+
+    # Research Topic Configuration
+    RESEARCH_TOPIC = os.getenv("RESEARCH_TOPIC", "").strip()  # Empty = prompt on startup
+    # Preset options: ai-ml, cryptocurrency, web3, quantum-computing, or custom
+
+    # Research Keywords/Focus Areas (deprecated - now managed by TopicManager)
     RESEARCH_KEYWORDS = [
         "AI libraries",
         "ML frameworks",
