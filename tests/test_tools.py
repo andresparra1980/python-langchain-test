@@ -416,7 +416,7 @@ class TestMemoryTools:
         tools = memory_tools.get_tools()
 
         assert isinstance(tools, list)
-        assert len(tools) == 4  # check_memory, search_memory, check_novelty, memory_stats
+        assert len(tools) == 5  # check_memory, search_memory, check_novelty, save_to_memory, memory_stats
         assert all(hasattr(tool, "name") for tool in tools)
 
     def test_create_memory_tools_convenience_function(self, mock_memory_service):
@@ -424,7 +424,35 @@ class TestMemoryTools:
         tools = create_memory_tools()
 
         assert isinstance(tools, list)
-        assert len(tools) == 4
+        assert len(tools) == 5
+
+    def test_save_to_memory_success(self, memory_tools):
+        """Test saving a topic to memory"""
+        memory_tools.memory_service.store_topic.return_value = Mock()
+
+        data = '{"topic": "LangChain", "summary": "Framework for LLMs", "sources": ["https://langchain.com"], "tags": ["framework"]}'
+        result = memory_tools.save_to_memory(data)
+
+        assert "Saved 'LangChain' to memory" in result
+        memory_tools.memory_service.store_topic.assert_called_once_with(
+            topic_name="LangChain",
+            summary="Framework for LLMs",
+            sources=["https://langchain.com"],
+            tags=["framework"]
+        )
+
+    def test_save_to_memory_invalid_json(self, memory_tools):
+        """Test saving with invalid JSON"""
+        result = memory_tools.save_to_memory("not valid json")
+
+        assert "Invalid JSON format" in result
+
+    def test_save_to_memory_missing_topic(self, memory_tools):
+        """Test saving without topic name"""
+        data = '{"summary": "Some summary"}'
+        result = memory_tools.save_to_memory(data)
+
+        assert "topic' field is required" in result
 
 
 class TestToolsIntegration:
@@ -450,11 +478,11 @@ class TestToolsIntegration:
         # Verify all were created
         assert len(search_tools) == 4
         assert len(email_tools) == 2
-        assert len(memory_tools) == 4
+        assert len(memory_tools) == 5
 
         # Verify total tool count
         all_tools = search_tools + email_tools + memory_tools
-        assert len(all_tools) == 10
+        assert len(all_tools) == 11
 
     def test_tool_names_are_unique(self):
         """Test that all tool names are unique"""

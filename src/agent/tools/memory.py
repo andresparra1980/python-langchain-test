@@ -147,26 +147,68 @@ class MemoryTools:
     def get_memory_stats(self, _: str = "") -> str:
         """
         Get statistics about the memory system.
-        
+
         Args:
             _: Unused parameter (for LangChain tool compatibility)
-            
+
         Returns:
             String with memory statistics
         """
         stats = self.memory_service.get_stats()
-        
+
         result = "Memory System Statistics:\n\n"
         result += f"Total topics researched: {stats['total_topics']}\n"
         result += f"Topics mentioned in last 7 days: {stats['recent_topics_7days']}\n"
         result += f"Database: {stats['database_url']}\n"
-        
+
         return result
+
+    def save_to_memory(self, data: str) -> str:
+        """
+        Save a researched topic to memory.
+
+        Args:
+            data: JSON string with format:
+                  {"topic": "name", "summary": "text", "sources": ["url1", "url2"], "tags": ["tag1"]}
+
+        Returns:
+            Success or error message
+        """
+        try:
+            import json
+
+            # Parse the input
+            try:
+                topic_data = json.loads(data)
+            except json.JSONDecodeError:
+                return "Error: Invalid JSON format. Please provide data as JSON string."
+
+            # Extract required fields
+            topic_name = topic_data.get("topic")
+            summary = topic_data.get("summary", "")
+            sources = topic_data.get("sources", [])
+            tags = topic_data.get("tags", [])
+
+            if not topic_name:
+                return "Error: 'topic' field is required"
+
+            # Store in memory
+            topic = self.memory_service.store_topic(
+                topic_name=topic_name,
+                summary=summary,
+                sources=sources,
+                tags=tags
+            )
+
+            return f"✓ Saved '{topic_name}' to memory with {len(sources)} sources and {len(tags)} tags."
+
+        except Exception as e:
+            return f"Error saving to memory: {str(e)}"
     
     def get_tools(self) -> List[Tool]:
         """
         Get LangChain tools for memory operations.
-        
+
         Returns:
             List of LangChain Tool objects
         """
@@ -199,6 +241,17 @@ class MemoryTools:
                     "Use this to determine if you should provide information about a topic. "
                     "Input should be the topic name. "
                     "Returns whether the topic is novel or has been recently covered."
+                )
+            ),
+            Tool(
+                name="save_to_memory",
+                func=self.save_to_memory,
+                description=(
+                    "Save a researched topic to memory for future reference. "
+                    "Use this AFTER researching a topic to store the findings. "
+                    "Input should be a JSON string with this format: "
+                    '{"topic": "topic name", "summary": "brief summary", "sources": ["url1", "url2"], "tags": ["tag1", "tag2"]}. '
+                    "This helps avoid researching the same topic repeatedly."
                 )
             ),
             Tool(
