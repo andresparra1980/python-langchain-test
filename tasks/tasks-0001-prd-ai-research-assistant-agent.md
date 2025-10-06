@@ -43,7 +43,7 @@ Based on PRD: `0001-prd-ai-research-assistant-agent.md`
   - [x] 1.6 Add pytest and testing dependencies to pyproject.toml
   - [x] 1.7 Create basic README with setup instructions using uv
 
-- [ ] 2.0 Implement Agent Core with LangChain and LangSmith Integration
+- [x] 2.0 Implement Agent Core with LangChain and LangSmith Integration
   - [x] 2.1 Create `src/utils/langsmith.py` to configure LangSmith tracing and instrumentation
   - [x] 2.2 Implement `src/agent/core.py` with LangChain ReAct agent initialization
   - [x] 2.3 Add conversation memory/context management using LangChain's ConversationBufferMemory or similar
@@ -53,13 +53,13 @@ Based on PRD: `0001-prd-ai-research-assistant-agent.md`
   - [x] 2.7 Write unit tests for agent core functionality in `tests/test_agent_core.py`
 
 - [ ] 3.0 Build Memory System for Topic Tracking and Novelty Detection
-  - [ ] 3.1 Create `src/memory/models.py` with data models for topics (ID, name, timestamps, summary, sources, tags)
-  - [ ] 3.2 Implement `src/memory/database.py` for SQLite connection and initialization
-  - [ ] 3.3 Create `src/memory/service.py` with CRUD operations (store topic, retrieve topic, search topics)
-  - [ ] 3.4 Implement novelty detection logic (check if topic exists, compare timestamps, identify new information)
-  - [ ] 3.5 Add function to mark topics as mentioned/updated with current timestamp
-  - [ ] 3.6 Create memory retrieval tool in `src/agent/tools/memory.py` for agent to query previous research
-  - [ ] 3.7 Write unit tests for memory service in `tests/test_memory_service.py`
+  - [x] 3.1 Create `src/memory/models.py` with data models for topics (ID, name, timestamps, summary, sources, tags)
+  - [x] 3.2 Implement `src/memory/database.py` for SQLite connection and initialization
+  - [x] 3.3 Create `src/memory/service.py` with CRUD operations (store topic, retrieve topic, search topics)
+  - [x] 3.4 Implement novelty detection logic (check if topic exists, compare timestamps, identify new information)
+  - [x] 3.5 Add function to mark topics as mentioned/updated with current timestamp
+  - [x] 3.6 Create memory retrieval tool in `src/agent/tools/memory.py` for agent to query previous research
+  - [x] 3.7 Write unit tests for memory service in `tests/test_memory_service.py`
 
 - [ ] 4.0 Implement Tool Functions (Web Search and Email)
   - [ ] 4.1 Implement `src/agent/tools/search.py` as LangChain tool using Tavily API for web search
