@@ -150,9 +150,23 @@ class EmailTools:
                     "tags": []
                 }]
 
+            # Check for error response from get_newsletter_findings
+            if isinstance(findings, dict) and "error" in findings:
+                return (
+                    f"❌ Cannot send newsletter: {findings['message']}\n"
+                    f"💡 {findings['suggestion']}"
+                )
+
             # Ensure findings is a list
             if not isinstance(findings, list):
                 findings = [findings]
+
+            # Check if list is empty
+            if not findings or len(findings) == 0:
+                return (
+                    "❌ Cannot send newsletter: No research findings available.\n"
+                    "💡 Please research some topics in the current domain first."
+                )
 
             # Generate newsletter
             date_str = datetime.now().strftime("%B %d, %Y")

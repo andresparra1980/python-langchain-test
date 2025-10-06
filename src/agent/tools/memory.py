@@ -175,7 +175,11 @@ class MemoryTools:
             )
 
             if not topics:
-                return "[]"
+                return json.dumps({
+                    "error": "No research findings available for newsletter",
+                    "message": "The current research domain has no saved topics yet. Please research some topics first before requesting a newsletter.",
+                    "suggestion": "Try researching topics in this domain, then request a newsletter again."
+                })
 
             # Format for newsletter
             findings = []
