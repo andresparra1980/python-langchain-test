@@ -49,17 +49,50 @@ The SQLite database will be automatically created on first run at `./research_as
 
 ## Usage
 
-### CLI Mode
+### CLI Mode (Default)
+
+Start the interactive CLI interface:
 
 ```bash
-uv run python main.py --mode cli
+uv run python main.py
+```
+
+Or with reduced verbosity:
+
+```bash
+uv run python main.py --quiet
 ```
 
 ### Telegram Bot
 
+Start the Telegram bot:
+
 ```bash
-uv run python main.py --mode telegram
+uv run python main.py --telegram
 ```
+
+Or with a custom bot token:
+
+```bash
+uv run python main.py --telegram --token YOUR_BOT_TOKEN
+```
+
+### Getting Help
+
+```bash
+uv run python main.py --help
+```
+
+### Example Commands in CLI
+
+Once the CLI starts, you can:
+- Ask research questions: `"Research new Python AI libraries"`
+- Search specific sources: `"Search GitHub for vector databases"`
+- Check memory: `"What did we discuss about LangChain?"`
+- Request newsletters: `"Send me a newsletter with recent findings"`
+- Get help: Type `help`
+- Clear session: Type `clear`
+- Exit: Type `exit` or `quit`
 
 ## Project Structure
 
