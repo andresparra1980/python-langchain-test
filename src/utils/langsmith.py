@@ -19,23 +19,24 @@ def setup_langsmith_tracing() -> Optional[Client]:
         return None
     
     # Set environment variables for LangChain's automatic tracing
-    os.environ["LANGSMITH_TRACING_V2"] = "true"
-    os.environ["LANGSMITH_API_KEY"] = config.LANGSMITH_API_KEY
-    os.environ["LANGSMITH_PROJECT"] = config.LANGSMITH_PROJECT
-    
+    os.environ["LANGCHAIN_TRACING_V2"] = "true"
+    os.environ["LANGCHAIN_API_KEY"] = config.LANGSMITH_API_KEY
+    os.environ["LANGCHAIN_PROJECT"] = config.LANGSMITH_PROJECT
+
     # Create and return LangSmith client
-    client = Client(
-        api_key=config.LANGSMITH_API_KEY,
-        project_name=config.LANGSMITH_PROJECT
-    )
-    
-    print(f"✓ LangSmith tracing enabled for project: {config.LANGSMITH_PROJECT}")
-    return client
+    try:
+        client = Client(api_key=config.LANGSMITH_API_KEY)
+        print(f"✓ LangSmith tracing enabled for project: {config.LANGSMITH_PROJECT}")
+        return client
+    except Exception as e:
+        print(f"Warning: Could not initialize LangSmith client: {e}")
+        print("  Tracing will still work via environment variables")
+        return None
 
 
 def disable_langsmith_tracing():
     """Disable LangSmith tracing"""
-    os.environ["LANGSMITH_TRACING_V2"] = "false"
+    os.environ["LANGCHAIN_TRACING_V2"] = "false"
     print("✓ LangSmith tracing disabled")
 
 
