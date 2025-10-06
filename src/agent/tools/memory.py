@@ -144,6 +144,50 @@ class MemoryTools:
                 f"Avoid repeating the same information unless specifically requested."
             )
     
+    def get_recent_findings_for_newsletter(self, limit: str = "10") -> str:
+        """
+        Get recent research findings formatted for newsletter.
+
+        Args:
+            limit: Number of recent topics to retrieve (default: 10)
+
+        Returns:
+            JSON string ready for send_newsletter tool
+        """
+        try:
+            import json
+
+            # Parse limit
+            try:
+                limit_int = int(limit)
+            except ValueError:
+                limit_int = 10
+
+            # Get recent topics
+            topics = self.memory_service.search_topics(
+                query="",
+                limit=limit_int
+            )
+
+            if not topics:
+                return "[]"
+
+            # Format for newsletter
+            findings = []
+            for topic in topics:
+                finding = {
+                    "topic": topic.topic_name,
+                    "summary": topic.summary or "No summary available",
+                    "sources": topic.sources or [],
+                    "tags": topic.tags or []
+                }
+                findings.append(finding)
+
+            return json.dumps(findings, indent=2)
+
+        except Exception as e:
+            return f"Error retrieving findings: {str(e)}"
+
     def get_memory_stats(self, _: str = "") -> str:
         """
         Get statistics about the memory system.
@@ -252,6 +296,17 @@ class MemoryTools:
                     "Input should be a JSON string with this format: "
                     '{"topic": "topic name", "summary": "brief summary", "sources": ["url1", "url2"], "tags": ["tag1", "tag2"]}. '
                     "This helps avoid researching the same topic repeatedly."
+                )
+            ),
+            Tool(
+                name="get_newsletter_findings",
+                func=self.get_recent_findings_for_newsletter,
+                description=(
+                    "Get recent research findings formatted as JSON for newsletter. "
+                    "Use this BEFORE calling send_newsletter to get properly formatted data. "
+                    "Input should be the number of topics to include (e.g., '5' or '10'). "
+                    "Returns a JSON string ready to pass directly to send_newsletter tool. "
+                    "This makes sending newsletters easy - just get findings here, then pass to send_newsletter."
                 )
             ),
             Tool(

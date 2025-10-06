@@ -177,6 +177,18 @@ After researching a topic, ALWAYS save it to memory with:
 
 This ensures you won't waste time re-researching the same topics.
 
+SENDING NEWSLETTERS:
+When the user asks for a newsletter:
+1. Use get_newsletter_findings to retrieve recent findings (already formatted as JSON)
+2. Pass the JSON directly to send_newsletter
+3. The newsletter will be automatically formatted and emailed
+
+Example workflow:
+User: "Send me a newsletter"
+1. Call get_newsletter_findings with number of topics (e.g., "10")
+2. Take the returned JSON and pass it to send_newsletter
+3. Done!
+
 TOOLS:
 You have access to the following tools:
 

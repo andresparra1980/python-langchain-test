@@ -217,10 +217,12 @@ class EmailTools:
                 func=self.send_newsletter,
                 description=(
                     "Send a newsletter email with research findings. "
-                    "Input should be a JSON string with findings in this format: "
-                    '[{"topic": "name", "summary": "text", "sources": ["url1"], "tags": ["tag1"]}]. '
-                    "The newsletter will be formatted and sent to the configured recipient. "
-                    "Use this when the user asks to send a newsletter or email report of research findings."
+                    "IMPORTANT: First use search_memory to get recent topics, then pass them here. "
+                    "Input MUST be a valid JSON string (use json.dumps) with this exact structure: "
+                    '[{"topic": "Topic Name", "summary": "Detailed summary of findings", "sources": ["https://url1.com", "https://url2.com"], "tags": ["tag1", "tag2"]}]. '
+                    "Each topic should have: topic (string), summary (string, be detailed!), sources (list of URLs), tags (list). "
+                    "Make sure summaries are comprehensive - include key details, features, or findings. "
+                    "Use this when the user explicitly requests a newsletter or email report."
                 )
             ),
             Tool(
