@@ -52,7 +52,7 @@ Based on PRD: `0001-prd-ai-research-assistant-agent.md`
   - [x] 2.6 Instrument agent with LangSmith callbacks to log all steps, tool calls, and LLM interactions
   - [x] 2.7 Write unit tests for agent core functionality in `tests/test_agent_core.py`
 
-- [ ] 3.0 Build Memory System for Topic Tracking and Novelty Detection
+- [x] 3.0 Build Memory System for Topic Tracking and Novelty Detection
   - [x] 3.1 Create `src/memory/models.py` with data models for topics (ID, name, timestamps, summary, sources, tags)
   - [x] 3.2 Implement `src/memory/database.py` for SQLite connection and initialization
   - [x] 3.3 Create `src/memory/service.py` with CRUD operations (store topic, retrieve topic, search topics)
@@ -61,13 +61,13 @@ Based on PRD: `0001-prd-ai-research-assistant-agent.md`
   - [x] 3.6 Create memory retrieval tool in `src/agent/tools/memory.py` for agent to query previous research
   - [x] 3.7 Write unit tests for memory service in `tests/test_memory_service.py`
 
-- [ ] 4.0 Implement Tool Functions (Web Search and Email)
-  - [ ] 4.1 Implement `src/agent/tools/search.py` as LangChain tool using Tavily API for web search
-  - [ ] 4.2 Add source specification logic (GitHub, arXiv, general web) to search tool
-  - [ ] 4.3 Create `src/utils/formatters.py` for newsletter template (HTML or Markdown format with sections, links, insights)
-  - [ ] 4.4 Implement `src/agent/tools/email.py` for SMTP email sending with newsletter formatting
-  - [ ] 4.5 Add error handling for network failures, API rate limits, and SMTP connection issues
-  - [ ] 4.6 Write unit tests for tools in `tests/test_tools.py` (mock Tavily API calls and SMTP)
+- [x] 4.0 Implement Tool Functions (Web Search and Email)
+  - [x] 4.1 Implement `src/agent/tools/search.py` as LangChain tool using Tavily API for web search
+  - [x] 4.2 Add source specification logic (GitHub, arXiv, general web) to search tool
+  - [x] 4.3 Create `src/utils/formatters.py` for newsletter template (HTML or Markdown format with sections, links, insights)
+  - [x] 4.4 Implement `src/agent/tools/email.py` for SMTP email sending with newsletter formatting
+  - [x] 4.5 Add error handling for network failures, API rate limits, and SMTP connection issues
+  - [x] 4.6 Write unit tests for tools in `tests/test_tools.py` (mock Tavily API calls and SMTP)
 
 - [ ] 5.0 Create Modular Input Architecture (CLI and Telegram)
   - [ ] 5.1 Create `src/adapters/base.py` with abstract InputAdapter class defining interface (receive_message, send_message)
