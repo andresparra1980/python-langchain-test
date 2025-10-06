@@ -69,14 +69,14 @@ Based on PRD: `0001-prd-ai-research-assistant-agent.md`
   - [x] 4.5 Add error handling for network failures, API rate limits, and SMTP connection issues
   - [x] 4.6 Write unit tests for tools in `tests/test_tools.py` (mock Tavily API calls and SMTP)
 
-- [ ] 5.0 Create Modular Input Architecture (CLI and Telegram)
-  - [ ] 5.1 Create `src/adapters/base.py` with abstract InputAdapter class defining interface (receive_message, send_message)
-  - [ ] 5.2 Implement `src/adapters/cli.py` for terminal-based interaction (input loop, formatted output)
-  - [ ] 5.3 Implement `src/adapters/telegram.py` using python-telegram-bot library (webhook or polling)
-  - [ ] 5.4 Add adapter-specific response formatting (plain text for CLI, Telegram markdown for Telegram)
-  - [ ] 5.5 Update `main.py` to select adapter based on command-line argument or environment variable
-  - [ ] 5.6 Add session management to maintain conversation context per channel/user
-  - [ ] 5.7 Write unit tests for adapters in `tests/test_adapters.py`
+- [x] 5.0 Create Modular Input Architecture (CLI and Telegram)
+  - [x] 5.1 Create `src/adapters/base.py` with abstract InputAdapter class defining interface (receive_message, send_message)
+  - [x] 5.2 Implement `src/adapters/cli.py` for terminal-based interaction (input loop, formatted output)
+  - [x] 5.3 Implement `src/adapters/telegram.py` using python-telegram-bot library (webhook or polling)
+  - [x] 5.4 Add adapter-specific response formatting (plain text for CLI, Telegram markdown for Telegram)
+  - [x] 5.5 Update `main.py` to select adapter based on command-line argument or environment variable
+  - [x] 5.6 Add session management to maintain conversation context per channel/user
+  - [x] 5.7 Write unit tests for adapters in `tests/test_adapters.py`
 
 - [ ] 6.0 Integration and End-to-End Testing
   - [ ] 6.1 Test complete workflow: CLI command → agent research → memory storage → follow-up conversation
