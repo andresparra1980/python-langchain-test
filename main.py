@@ -67,12 +67,8 @@ def create_agent(verbose: bool = True) -> ResearchAgent:
         newsletter_tool = create_newsletter_tool(current_domain_id=current_domain.id)
         print(f"  ✓ Loaded newsletter tool")
 
-        # Combine all tools (remove get_newsletter_findings and send_newsletter, use combined instead)
-        # Filter out the individual newsletter tools
-        email_tools_filtered = [t for t in email_tools if t.name != "send_newsletter"]
-        memory_tools_filtered = [t for t in memory_tools if t.name != "get_newsletter_findings"]
-
-        all_tools = search_tools + email_tools_filtered + memory_tools_filtered + [newsletter_tool]
+        # Combine all tools
+        all_tools = search_tools + email_tools + memory_tools + [newsletter_tool]
         print(f"  ✓ Total tools available: {len(all_tools)}")
 
     except Exception as e:

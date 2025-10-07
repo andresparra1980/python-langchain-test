@@ -238,19 +238,6 @@ class EmailTools:
         """
         return [
             Tool(
-                name="send_newsletter",
-                func=self.send_newsletter,
-                description=(
-                    "Send a newsletter email with research findings. "
-                    "Input: The JSON string OUTPUT from get_newsletter_findings tool (NOT the limit number!). "
-                    "The input must be a JSON array of findings like: [{\"topic\": \"...\", \"summary\": \"...\", \"sources\": [...], \"tags\": [...]}] "
-                    "CRITICAL: You MUST first call get_newsletter_findings, capture its output (the JSON array), "
-                    "then pass that EXACT output string to this tool. "
-                    "DO NOT pass {\"limit\": \"10\"} or any other format - only pass the findings JSON array. "
-                    "Use this when the user explicitly requests a newsletter or email report."
-                )
-            ),
-            Tool(
                 name="send_email",
                 func=self.send_simple_email,
                 description=(

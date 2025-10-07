@@ -308,18 +308,6 @@ class MemoryTools:
                 )
             ),
             Tool(
-                name="get_newsletter_findings",
-                func=self.get_recent_findings_for_newsletter,
-                description=(
-                    "Get recent research findings formatted as JSON for newsletter. "
-                    "Input: A number as a string (e.g., '5' or '10') indicating how many topics to retrieve. "
-                    "Output: A JSON string containing an array of research findings. "
-                    "IMPORTANT: Save the output from this tool in a variable, then pass that EXACT output "
-                    "to the send_newsletter tool. Do NOT pass the limit number to send_newsletter. "
-                    "Example: output = get_newsletter_findings('10'), then send_newsletter(output)"
-                )
-            ),
-            Tool(
                 name="memory_stats",
                 func=self.get_memory_stats,
                 description=(
