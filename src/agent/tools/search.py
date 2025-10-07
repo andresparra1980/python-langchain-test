@@ -218,8 +218,9 @@ class SearchTools:
                 func=self.search_web,
                 description=(
                     "Search the web for information using Tavily. "
-                    "Use this for general web searches about any topic. "
-                    "Input should be a search query string. "
+                    "⚠️ ONLY use when user explicitly asks to search, research, find, or investigate a specific topic. "
+                    "DO NOT use for unclear inputs, single words/numbers without context, or general questions. "
+                    "Input should be a clear, descriptive search query string. "
                     "Returns top search results with titles, URLs, and content snippets."
                 )
             ),
@@ -228,7 +229,7 @@ class SearchTools:
                 func=self.search_github,
                 description=(
                     "Search GitHub for repositories, projects, and code. "
-                    "Use this when looking for open-source projects, libraries, or code examples. "
+                    "⚠️ ONLY use when user explicitly asks to search GitHub or find open-source projects. "
                     "Input should be a search query (e.g., 'langchain python', 'vector database'). "
                     "Returns GitHub repositories with descriptions."
                 )
@@ -238,7 +239,7 @@ class SearchTools:
                 func=self.search_arxiv,
                 description=(
                     "Search arXiv for academic papers and research. "
-                    "Use this when looking for scientific papers, research, or academic publications. "
+                    "⚠️ ONLY use when user explicitly asks for papers, research, or academic publications. "
                     "Input should be a search query related to research topics. "
                     "Returns paper titles, URLs, and abstracts."
                 )
@@ -248,7 +249,7 @@ class SearchTools:
                 func=self.search_news,
                 description=(
                     "Search for recent news articles (last 7 days). "
-                    "Use this when looking for latest news, announcements, or current events. "
+                    "⚠️ ONLY use when user explicitly asks for news, latest updates, or current events. "
                     "Input should be a search query for news topics. "
                     "Returns recent news articles with titles and summaries."
                 )

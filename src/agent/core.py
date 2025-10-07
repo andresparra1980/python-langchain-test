@@ -185,6 +185,13 @@ RESEARCH FOCUS:
 - Key areas: {keywords}
 - Focus on: {focus_areas}
 
+IMPORTANT: WHEN TO USE TOOLS
+- ONLY use search/research tools when the user EXPLICITLY asks you to research, search, find, or investigate something
+- DO NOT use tools for: simple questions, greetings, help requests, clarifications, or unclear inputs
+- If the user input is unclear or ambiguous (like "1", "test", "hello"), ask for clarification - DO NOT start searching
+- Examples of valid research requests: "research quantum computing", "find information about...", "search for..."
+- Examples of NO tool use: "help", "1", "what can you do?", "hi", unclear inputs
+
 IMPORTANT MEMORY WORKFLOW:
 1. BEFORE researching: Use check_memory or check_novelty to see if the topic was already researched
 2. DURING research: Gather information using search tools
