@@ -14,6 +14,7 @@ from src.agent.core import ResearchAgent
 from src.agent.tools.search import create_search_tools
 from src.agent.tools.email import create_email_tools
 from src.agent.tools.memory import MemoryTools
+from src.agent.tools.newsletter import create_newsletter_tool
 from src.adapters.cli import CLIAdapter
 from src.adapters.telegram import TelegramAdapter
 from src.topic.manager import TopicManager
@@ -62,8 +63,16 @@ def create_agent(verbose: bool = True) -> ResearchAgent:
         memory_tools = memory_tools_instance.get_tools()
         print(f"  ✓ Loaded {len(memory_tools)} memory tools")
 
-        # Combine all tools
-        all_tools = search_tools + email_tools + memory_tools
+        # Create combined newsletter tool
+        newsletter_tool = create_newsletter_tool(current_domain_id=current_domain.id)
+        print(f"  ✓ Loaded newsletter tool")
+
+        # Combine all tools (remove get_newsletter_findings and send_newsletter, use combined instead)
+        # Filter out the individual newsletter tools
+        email_tools_filtered = [t for t in email_tools if t.name != "send_newsletter"]
+        memory_tools_filtered = [t for t in memory_tools if t.name != "get_newsletter_findings"]
+
+        all_tools = search_tools + email_tools_filtered + memory_tools_filtered + [newsletter_tool]
         print(f"  ✓ Total tools available: {len(all_tools)}")
 
     except Exception as e:

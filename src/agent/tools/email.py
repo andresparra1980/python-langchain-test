@@ -242,12 +242,11 @@ class EmailTools:
                 func=self.send_newsletter,
                 description=(
                     "Send a newsletter email with research findings. "
-                    "IMPORTANT: First use get_newsletter_findings to retrieve formatted data, then pass the EXACT output here. "
-                    "Input should be the JSON string returned from get_newsletter_findings - do NOT modify it, just pass it directly. "
-                    "Example workflow: "
-                    "1. Call get_newsletter_findings with number of topics (e.g., '10') "
-                    "2. Take the returned JSON string and pass it DIRECTLY to this tool "
-                    "3. Done! The newsletter will be formatted and sent. "
+                    "Input: The JSON string OUTPUT from get_newsletter_findings tool (NOT the limit number!). "
+                    "The input must be a JSON array of findings like: [{\"topic\": \"...\", \"summary\": \"...\", \"sources\": [...], \"tags\": [...]}] "
+                    "CRITICAL: You MUST first call get_newsletter_findings, capture its output (the JSON array), "
+                    "then pass that EXACT output string to this tool. "
+                    "DO NOT pass {\"limit\": \"10\"} or any other format - only pass the findings JSON array. "
                     "Use this when the user explicitly requests a newsletter or email report."
                 )
             ),

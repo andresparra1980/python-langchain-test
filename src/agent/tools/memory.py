@@ -312,10 +312,11 @@ class MemoryTools:
                 func=self.get_recent_findings_for_newsletter,
                 description=(
                     "Get recent research findings formatted as JSON for newsletter. "
-                    "Use this BEFORE calling send_newsletter to get properly formatted data. "
-                    "Input should be the number of topics to include (e.g., '5' or '10'). "
-                    "Returns a JSON string ready to pass directly to send_newsletter tool. "
-                    "This makes sending newsletters easy - just get findings here, then pass to send_newsletter."
+                    "Input: A number as a string (e.g., '5' or '10') indicating how many topics to retrieve. "
+                    "Output: A JSON string containing an array of research findings. "
+                    "IMPORTANT: Save the output from this tool in a variable, then pass that EXACT output "
+                    "to the send_newsletter tool. Do NOT pass the limit number to send_newsletter. "
+                    "Example: output = get_newsletter_findings('10'), then send_newsletter(output)"
                 )
             ),
             Tool(

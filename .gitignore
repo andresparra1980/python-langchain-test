@@ -15,3 +15,4 @@ wheels/
 
 # Database
 research_assistant.db*.backup_*
+research_assistant.db
