@@ -43,8 +43,47 @@ def get_user_choice() -> str:
             elif choice == "5":
                 custom_topic = input("\nEnter your custom topic name: ").strip()
                 if custom_topic:
+                    # Check for similar existing domains using LLM
+                    print(f"\n🔍 Checking if '{custom_topic}' matches any existing domains...")
+
+                    topic_manager = TopicManager()
+                    matched_domain_name = None
+
+                    try:
+                        from src.topic.matcher import find_similar_domain
+
+                        existing_domains = topic_manager.list_domains()
+
+                        if existing_domains:
+                            # Prepare domain list for LLM matching
+                            existing_domains_list = [
+                                {"name": d.name, "description": d.description or ""}
+                                for d in existing_domains
+                            ]
+
+                            # Use LLM to find similar domain
+                            matched_domain_name = find_similar_domain(custom_topic, existing_domains_list)
+
+                            if matched_domain_name:
+                                print(f"\n💡 This topic seems similar to existing domain: '{matched_domain_name}'")
+                                use_existing = input("Would you like to use that instead? (y/n): ").strip().lower()
+
+                                if use_existing == 'y':
+                                    print(f"\n✓ Using existing domain: {matched_domain_name}")
+                                    return matched_domain_name
+                                else:
+                                    print("\n📝 Creating new custom topic instead...")
+                            else:
+                                print("\n✓ No similar domains found. Creating new topic.")
+                        else:
+                            print("\n📝 No existing domains to compare.")
+
+                    except Exception as e:
+                        print(f"\n⚠️  Could not check for similar domains: {str(e)}")
+                        print("Proceeding with custom topic creation...\n")
+
                     # Ask for optional description
-                    description = input("Brief description (optional): ").strip()
+                    description = input("\nBrief description (optional): ").strip()
                     keywords_input = input("Keywords (comma-separated, optional): ").strip()
 
                     keywords = []
@@ -52,7 +91,6 @@ def get_user_choice() -> str:
                         keywords = [k.strip() for k in keywords_input.split(",")]
 
                     # Create custom topic
-                    topic_manager = TopicManager()
                     try:
                         topic_manager.create_custom_domain(
                             name=custom_topic,

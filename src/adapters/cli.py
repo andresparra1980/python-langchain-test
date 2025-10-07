@@ -121,6 +121,11 @@ class CLIAdapter(InputAdapter):
                     self._handle_topic_command(user_input.strip())
                     continue
 
+                # Check for memory commands
+                if user_input.strip().lower().startswith("/memory"):
+                    self._handle_memory_command(user_input.strip())
+                    continue
+
                 # Process message through agent
                 response = self.process_message(user_input)
 
@@ -223,6 +228,8 @@ Available commands:
   /topic            - Show current research topic
   /topic list       - List all available topics
   /topic set <name> - Switch to a different topic
+  /memory clear     - Clear all memory for current topic
+  /memory stats     - Show memory statistics
   exit, quit        - Exit the application
 
 You can ask me to:
@@ -296,3 +303,65 @@ You can ask me to:
             print("  /topic            - Show current topic")
             print("  /topic list       - List all topics")
             print("  /topic set <name> - Switch topic (requires restart)\n")
+
+    def _handle_memory_command(self, command: str) -> None:
+        """
+        Handle memory management commands.
+
+        Args:
+            command: The memory command string
+        """
+        from src.topic.manager import get_topic_manager
+        from src.memory.service import MemoryService
+
+        parts = command.split()
+        topic_manager = get_topic_manager()
+        current_domain = topic_manager.get_current_domain()
+
+        if not current_domain:
+            print(self._colorize("\n✗ No topic selected\n", "red"))
+            return
+
+        memory_service = MemoryService(current_domain_id=current_domain.id)
+
+        if len(parts) == 1:
+            # Show memory help
+            print(self._colorize("\nMemory commands:", "yellow"))
+            print("  /memory clear  - Clear all topics for current domain")
+            print("  /memory stats  - Show memory statistics\n")
+
+        elif len(parts) >= 2 and parts[1].lower() == "clear":
+            # Clear memory for current domain
+            try:
+                print(self._colorize(f"\n⚠️  Warning: This will delete ALL {current_domain.name} research topics from memory.", "yellow"))
+                confirm = input("Are you sure? Type 'yes' to confirm: ").strip().lower()
+
+                if confirm == "yes":
+                    # Get all topics for current domain and delete them
+                    topics = memory_service.search_topics(query="", limit=1000)
+                    count = len(topics)
+
+                    for topic in topics:
+                        memory_service.delete_topic(topic.id)
+
+                    print(self._colorize(f"\n✓ Cleared {count} topics from {current_domain.name} memory\n", "green"))
+                else:
+                    print(self._colorize("\nCancelled\n", "yellow"))
+
+            except Exception as e:
+                print(self._colorize(f"\n✗ Error clearing memory: {str(e)}\n", "red"))
+
+        elif len(parts) >= 2 and parts[1].lower() == "stats":
+            # Show memory statistics
+            try:
+                stats = memory_service.get_stats()
+                print(self._colorize(f"\nMemory Statistics for {current_domain.name}:", "green"))
+                print(f"  Total topics: {stats['total_topics']}")
+                print(f"  Recent (7 days): {stats['recent_topics_7days']}\n")
+            except Exception as e:
+                print(self._colorize(f"\n✗ Error getting stats: {str(e)}\n", "red"))
+
+        else:
+            print(self._colorize("\nInvalid memory command. Usage:", "yellow"))
+            print("  /memory clear  - Clear all topics")
+            print("  /memory stats  - Show statistics\n")

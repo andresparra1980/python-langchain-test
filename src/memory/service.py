@@ -305,23 +305,36 @@ class MemoryService:
     
     def get_stats(self) -> Dict[str, Any]:
         """
-        Get memory statistics.
-        
+        Get memory statistics for current domain.
+
         Returns:
             Dictionary with stats (total topics, recent topics, etc.)
         """
         with self.db.session_scope() as session:
-            total = session.query(ResearchTopic).count()
-            
+            # Base query
+            q = session.query(ResearchTopic)
+
+            # Filter by current domain if set
+            if self.current_domain_id is not None:
+                q = q.filter(ResearchTopic.research_domain_id == self.current_domain_id)
+
+            total = q.count()
+
             # Topics mentioned in last 7 days
             seven_days_ago = datetime.utcnow()
             from datetime import timedelta
             seven_days_ago = seven_days_ago - timedelta(days=7)
-            
-            recent = session.query(ResearchTopic).filter(
+
+            recent_q = session.query(ResearchTopic).filter(
                 ResearchTopic.last_mentioned >= seven_days_ago
-            ).count()
-            
+            )
+
+            # Filter by current domain if set
+            if self.current_domain_id is not None:
+                recent_q = recent_q.filter(ResearchTopic.research_domain_id == self.current_domain_id)
+
+            recent = recent_q.count()
+
             return {
                 "total_topics": total,
                 "recent_topics_7days": recent,
