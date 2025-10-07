@@ -242,9 +242,11 @@ class EmailTools:
                 func=self.send_simple_email,
                 description=(
                     "Send a simple text email with the provided content. "
+                    "⚠️ ONLY use this tool if the user EXPLICITLY asks to send an email or message via email. "
+                    "DO NOT use this for general responses, help requests, or answering questions. "
                     "Input should be the email content as a string. "
-                    "Use this for sending quick updates or simple messages. "
-                    "For research findings, prefer using send_newsletter instead."
+                    "Examples of when to use: 'email me the results', 'send me an email with...', 'message me about...'. "
+                    "For research findings, use send_research_newsletter instead."
                 )
             ),
         ]

@@ -51,9 +51,11 @@ class NewsletterTool:
             func=self.send_research_newsletter,
             description=(
                 "Send a newsletter email with recent research findings. "
+                "⚠️ ONLY use this tool if the user EXPLICITLY asks for a newsletter, digest, or email report of research findings. "
+                "DO NOT use for general questions, help requests, or regular responses. "
                 "Input: Number of topics to include as a string (e.g., '5' or '10'). "
                 "This tool handles everything: retrieves recent findings from memory and sends them via email. "
-                "Use this when the user requests a newsletter or email digest of research findings. "
+                "Examples of when to use: 'send me a newsletter', 'email me a digest', 'send research report'. "
                 "Example inputs: '5', '10', '20'"
             )
         )
